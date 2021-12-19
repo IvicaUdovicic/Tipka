@@ -1,52 +1,32 @@
-/*import logo from './logo.svg';*/
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-/*function ColorList(){
- 
-  }
-  
-  
-  return(
-    <div>
-      <button onClick={addColor}>dodaj boju</button>
-      <ul>
-        
-      </ul>
-    </div>
-  )
-}*/
-
-
 function App() {
-  const[color, setColor] = useState([])
-  const addColor = () => {
-    setColor(arr => [...color, `${arr.length}`]);
-    };
-  
-  
-  
-  
-  
-  
-  
+  const [colors, setColor] = useState([]);
   const [currentColor, setCurrentColor] = useState("");
+  const [previousUniqueColors, addUniqueColor] = useState([]);
+ 
   const handleClick = async () => {
-    const data = await axios.get("/json/color/random");
+    const data = await axios.post("/json/color/random");
     setCurrentColor({
-        color: "#" + data.data.new_color,
-        loading:false
+      hex: "#" + data.data.new_color,
+      loading: false,
     });
-    console.log(data.data.colors);
+    setColor([...colors, `${data.data.new_color}`]);
+    if (!previousUniqueColors.includes(currentColor.hex)) {
+      addUniqueColor([...previousUniqueColors, `${currentColor.hex}`]);
+    }
+    console.log(previousUniqueColors);
   };
+
   return (
     <div>
       <button
-        style={{ color: currentColor ? currentColor.color : 'white'}}
+        style={{ color: currentColor.hex ? currentColor.hex : "white" }}
         onClick={() => {
           handleClick();
-          addColor();}}
+        }}
         className="btn btn-primary"
         type="button"
         value="Update"
@@ -55,8 +35,11 @@ function App() {
       </button>
 
       <ul>
-      {color.map(color => (
-          <li key={color.data}>{color.value}</li>))}
+        {colors.map((colorName, index) => (
+          <li key={index} style={{ color: previousUniqueColors[index], fontWeight = currentColor.hex ? previousUniqueColors[index] : "black" }}>
+            {colorName}
+          </li>
+        ))}
       </ul>
       <input type="text" id="boja"></input>
     </div>
