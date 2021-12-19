@@ -1,12 +1,25 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
+
 
 function App() {
   const [colors, setColor] = useState([]);
   const [currentColor, setCurrentColor] = useState("");
   const [previousUniqueColors, addUniqueColor] = useState([]);
-  const [buttonLabel, setButtonLabel] = useState('select');
+  const [buttonLabel, setButtonLabel] = useState("select");
+  const [boje, updateBoje] = useState(colors);
+
+ const handleOnDragEnd = useCallback((result) => {
+    if (!result.destination) return;
+    const items = Array.from(boje);
+    const reorderItem = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderItem);
+
+    updateBoje(items);
+  }, []);
 
   const handleClick = async () => {
     const data = await axios.post("/json/color/random");
@@ -24,7 +37,7 @@ function App() {
     ) {
       addUniqueColor([...previousUniqueColors, `${currentColor.hex}`]);
     }
-    console.log(previousUniqueColors);
+   console.log(previousUniqueColors);
   }, [currentColor.hex]);
 
   return (
@@ -42,30 +55,52 @@ function App() {
           {buttonLabel}
         </button>
         <div className="Lista">
-          <ul>
-            {colors.map((colorName, index) => (
-              <li
-                className="li"
-                key={index}
-                style={{
-                  color: previousUniqueColors[index],
-                  fontWeight:
-                    currentColor.hex == previousUniqueColors[index]
-                      ? "bold"
-                      : "normal",
-                }}
-              >
-                {colorName}
-              </li>
-            ))}
-          </ul>
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Droppable droppableId="boje">
+              {(provided) => (
+                <ul
+                  className="boje"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {colors.map((colorName, index) => {
+                    return (
+                      <Draggable
+                        key={colorName}
+                        draggableId={colorName}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <li
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{
+                              color: previousUniqueColors[index],
+                              fontWeight:
+                                currentColor.hex == previousUniqueColors[index]
+                                  ? "bold"
+                                  : "normal",
+                            }}
+                          >
+                            {colorName}
+                          </li>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
         </div>
         <input
           className="input"
           type="text"
           placeholder="Unesi boju"
           id="boja"
-          onChange={e => setButtonLabel(e.target.value)}
+          onChange={(e) => setButtonLabel(e.target.value)}
         ></input>
       </div>
     </div>
