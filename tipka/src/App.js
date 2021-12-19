@@ -6,6 +6,7 @@ function App() {
   const [colors, setColor] = useState([]);
   const [currentColor, setCurrentColor] = useState("");
   const [previousUniqueColors, addUniqueColor] = useState([]);
+  const [buttonLabel, setButtonLabel] = useState('select');
 
   const handleClick = async () => {
     const data = await axios.post("/json/color/random");
@@ -17,7 +18,10 @@ function App() {
   };
 
   useEffect(() => {
-    if (typeof currentColor.hex !== "undefined" && !previousUniqueColors.includes(currentColor.hex)) {
+    if (
+      typeof currentColor.hex !== "undefined" &&
+      !previousUniqueColors.includes(currentColor.hex)
+    ) {
       addUniqueColor([...previousUniqueColors, `${currentColor.hex}`]);
     }
     console.log(previousUniqueColors);
@@ -35,18 +39,34 @@ function App() {
           type="button"
           value="Update"
         >
-          Search
+          {buttonLabel}
         </button>
         <div className="Lista">
           <ul>
             {colors.map((colorName, index) => (
-              <li key={index} style={{ color: previousUniqueColors[index] }}>
+              <li
+                className="li"
+                key={index}
+                style={{
+                  color: previousUniqueColors[index],
+                  fontWeight:
+                    currentColor.hex == previousUniqueColors[index]
+                      ? "bold"
+                      : "normal",
+                }}
+              >
                 {colorName}
               </li>
             ))}
           </ul>
         </div>
-        <input type="text" id="boja"></input>
+        <input
+          className="input"
+          type="text"
+          placeholder="Unesi boju"
+          id="boja"
+          onChange={e => setButtonLabel(e.target.value)}
+        ></input>
       </div>
     </div>
   );
