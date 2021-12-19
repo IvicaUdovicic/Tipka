@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+.Sve {
+  text-align: center;
+  padding-top: 50%;
+  background-color: whitesmoke;
+}
+
+.elementi {
+  width: 100%;
+}
+
+.tipka{
+  padding-bottom: 3px;
+}
+
+.Lista{
+  padding-bottom: 2px;
+  max-height: 450px;
+}

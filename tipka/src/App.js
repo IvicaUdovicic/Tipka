@@ -6,7 +6,7 @@ function App() {
   const [colors, setColor] = useState([]);
   const [currentColor, setCurrentColor] = useState("");
   const [previousUniqueColors, addUniqueColor] = useState([]);
- 
+
   const handleClick = async () => {
     const data = await axios.post("/json/color/random");
     setCurrentColor({
@@ -14,34 +14,40 @@ function App() {
       loading: false,
     });
     setColor([...colors, `${data.data.new_color}`]);
-    if (!previousUniqueColors.includes(currentColor.hex)) {
+  };
+
+  useEffect(() => {
+    if (typeof currentColor.hex !== "undefined" && !previousUniqueColors.includes(currentColor.hex)) {
       addUniqueColor([...previousUniqueColors, `${currentColor.hex}`]);
     }
     console.log(previousUniqueColors);
-  };
+  }, [currentColor.hex]);
 
   return (
-    <div>
-      <button
-        style={{ color: currentColor.hex ? currentColor.hex : "white" }}
-        onClick={() => {
-          handleClick();
-        }}
-        className="btn btn-primary"
-        type="button"
-        value="Update"
-      >
-        Search
-      </button>
-
-      <ul>
-        {colors.map((colorName, index) => (
-          <li key={index} style={{ color: previousUniqueColors[index], fontWeight = currentColor.hex ? previousUniqueColors[index] : "black" }}>
-            {colorName}
-          </li>
-        ))}
-      </ul>
-      <input type="text" id="boja"></input>
+    <div className="Sve">
+      <div className="elementi">
+        <button
+          style={{ color: currentColor.hex ? currentColor.hex : "black" }}
+          onClick={() => {
+            handleClick();
+          }}
+          className="tipka"
+          type="button"
+          value="Update"
+        >
+          Search
+        </button>
+        <div className="Lista">
+          <ul>
+            {colors.map((colorName, index) => (
+              <li key={index} style={{ color: previousUniqueColors[index] }}>
+                {colorName}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <input type="text" id="boja"></input>
+      </div>
     </div>
   );
 }
