@@ -3,8 +3,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-
-
 function App() {
   const [colors, setColor] = useState([]);
   const [currentColor, setCurrentColor] = useState("");
@@ -12,7 +10,7 @@ function App() {
   const [buttonLabel, setButtonLabel] = useState("select");
   const [boje, updateBoje] = useState(colors);
 
- const handleOnDragEnd = useCallback((result) => {
+  const handleOnDragEnd = useCallback((result) => {
     if (!result.destination) return;
     const items = Array.from(boje);
     const reorderItem = items.splice(result.source.index, 1);
@@ -37,7 +35,7 @@ function App() {
     ) {
       addUniqueColor([...previousUniqueColors, `${currentColor.hex}`]);
     }
-   console.log(previousUniqueColors);
+    console.log(previousUniqueColors);
   }, [currentColor.hex]);
 
   return (
@@ -58,39 +56,37 @@ function App() {
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId="boje">
               {(provided) => (
-                <ul
+                <div
                   className="boje"
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {colors.map((colorName, index) => {
-                    return (
-                      <Draggable
-                        key={colorName}
-                        draggableId={colorName}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <li
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={{
-                              color: previousUniqueColors[index],
-                              fontWeight:
-                                currentColor.hex == previousUniqueColors[index]
-                                  ? "bold"
-                                  : "normal",
-                            }}
-                          >
-                            {colorName}
-                          </li>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  {colors.map((colorName, index) => (
+                    <Draggable
+                      key={colorName}
+                      draggableId={colorName}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <li
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                          style={{
+                            color: previousUniqueColors[index],
+                            fontWeight:
+                              currentColor.hex == previousUniqueColors[index]
+                                ? "bold"
+                                : "normal",
+                          }}
+                        >
+                          {colorName}
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
                   {provided.placeholder}
-                </ul>
+                </div>
               )}
             </Droppable>
           </DragDropContext>
